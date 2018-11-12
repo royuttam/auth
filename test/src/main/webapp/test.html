@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>jsSHA (http://caligatio.github.com/jsSHA/) - File Test</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<script type="text/javascript" src="sha.js"></script>
+<script type="text/javascript" src="jsQR.js"></script>
+<script type="text/javascript" src="html5-qrcode.js"></script>
+</head>
+<body>
+aaaa
+<script>
+var sha256 = new jsSHA('SHA-256', 'TEXT');
+sha256.update('abc');
+var hash = sha256.getHash("HEX");
+//alert(hash);
+//jsQR(...);
+<div id="reader" style="width:300px;height:250px">
+ </div>
+
+
+
+</script>
+</body>
+</html>
