@@ -138,7 +138,7 @@ if(!hf.equals("")) {
 	<img src="QR.jsp?idstr=<%= hf %>&caption=Hash functions"><br />
 	
 	<img src="servlet/GenerateQRCode?qrText=<%= si %>"><br />
-	
+	-->
 	<%
 }
 else out.print("Found no common hash functions");
@@ -146,3 +146,4 @@ else out.print("Found no common hash functions");
 <a href="auth.html">Login</a>
 </body>
 </html>
+
