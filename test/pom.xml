@@ -45,7 +45,7 @@
         <maven.compiler.source>1.6</maven.compiler.source>
     </properties>
 
-
+<!--
     <dependencies>
         <dependency>
             <groupId>javax.websocket</groupId>
@@ -60,7 +60,7 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
+-->
     <build>
         <!-- Maven will append the version to the finalName (which is the name 
             given to the generated war, and hence the context root) -->
