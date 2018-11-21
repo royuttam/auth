@@ -1,0 +1,52 @@
+<html>
+<head>
+<script type="text/javascript" src="instascan.min.js"></script>
+</head>
+<body>
+
+ <form method="POST" action="register.jsp">
+   <fieldset style="width:300px">
+    <legend><b>&nbsp;Registration - Request&nbsp;</b></legend>
+    <table>
+	<tr>
+     <td><label for="login"> Login: </label> </td>
+     <td><input id="login" type="text" name="login" size="10" value="ukr"/></td>
+	 </tr>
+	 <tr>
+     <td><label for="passwd"> Password: </label> </td>
+     <td><input id="passwd" type="password" name="passwd" size="10" /></td>
+	 </tr>
+	 <tr>
+	 <td><label for="idstr"> Identity str: </label></td>
+     <td><input id="idstr" type="text" name="idstr" size="10" value="00-50-56-C0-00-08|MD5 SHA-1"/><a href="javascript:startCamera()">Read from QR</a></td>
+	 </tr>
+	</table>
+    <input id="generate" type="submit" value="Register" />
+   </fieldset>
+ </form>
+ <img src="QR1.jsp?idstr=00-50-56-C0-00-08|MD5 SHA-1"><br />
+ <video id="preview"></video>
+    <script type="text/javascript">
+	function startCamera() {
+      let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+      scanner.addListener('scan', function (content) {
+	    //alert(content);
+		document.getElementById('idstr').value = content;
+        alert(content);
+      });
+      Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+          scanner.start(cameras[0]);
+        } else {
+          alert('No cameras found.');
+        }
+      }).catch(function (e) {
+        alert(e);
+      });
+	}
+	
+   //startCamera();
+
+    </script>
+</body>
+</html>
