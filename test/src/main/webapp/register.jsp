@@ -52,7 +52,7 @@ String login =  request.getParameter("login");
 String passwd =  request.getParameter("passwd");
 String str =  request.getParameter("idstr");
 
-String[] strs = str.split("\\|");
+String[] strs = str.split("\\#");
 String clientStr = strs[0];
 
 String hf = "";
@@ -124,7 +124,7 @@ if(!hf.equals("")) {
 	out.println("<br/>Initial seed: "+si+" "+si.length()+"<br/>");
 	out.println("Hash functions: "+hf+"<br/>");
 	ClientInfo info  = new ClientInfo(si.toString(), h,m);
-	si=si+"|"+hf;
+	si=si+"#"+hf;
 	//out.println("<br/> QR text length: "+si.length()+"<br/>");
 	//}
 	String root = request.getServletContext().getRealPath("/")+"/";

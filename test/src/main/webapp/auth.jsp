@@ -10,6 +10,7 @@ pageEncoding="ISO-8859-1"%>
 <html>
 <head>
 <script type="text/javascript" src="instascan.min.js"></script>
+<script src="./jsQR.js"></script>  
 </head>
 <body>
 
@@ -57,7 +58,7 @@ if(info != null) {
 	//out.println("ss = "+ss+", cs = "+cs+"<br/>");		
 	
 	int[] challenge = Utils.challenge(info.m);
-//	out.println("Your challenge: (length="+challenge.length+")");
+	//	out.println("Your challenge: (length="+challenge.length+")");
 	StringBuffer path = new StringBuffer();
 	for(int i: challenge) {
 		//out.println(i+" ");
@@ -65,32 +66,32 @@ if(info != null) {
 	}
 	save(login, challenge, root);
 	out.println("<br/>");
-		
+	
 	
 	String st = ss; 
-		//out.println("<br/>"+st+"<br/>");
-		if(cc >= cs) {
-			for(int i=cs+1;i<=cc;i++) 
-			st=Utils.updateSeed(st,info.h[0]);
-		}
-		else {
-			st = si; 
-			for(int i=0;i<cc;i++) 
-			st=Utils.updateSeed(st,info.h[0]);
-		}
-		//out.println("<br/>st = "+st+"<br/>");
-		
-		//for(String hash: info.h)
-		//out.print(hash+" ");
-		//out.println("<br/>");
-		
-		String OTP = Utils.generateOTP(challenge,st,info.h);
-		out.println("initial seed st = "+st+"<br>"+OTP);
-		
-		//String seed = "SkJ6L8a9Xas6jjx6Icvk3vVHjZXUqsg3c2B9dDucAhRzuVkUWql!zta5pVnoy1xzfzQ5$nSDHeiC$kmIhLvXuc";
-		//String OTP1 = Utils.generateOTP(new int[] {0},seed,new String[] {"MD2"});
-		//out.println("initial seed seed = "+seed+"<br>"+OTP1);
-		
+	//out.println("<br/>"+st+"<br/>");
+	if(cc >= cs) {
+		for(int i=cs+1;i<=cc;i++) 
+		st=Utils.updateSeed(st,info.h[0]);
+	}
+	else {
+		st = si; 
+		for(int i=0;i<cc;i++) 
+		st=Utils.updateSeed(st,info.h[0]);
+	}
+	//out.println("<br/>st = "+st+"<br/>");
+	
+	//for(String hash: info.h)
+	//out.print(hash+" ");
+	//out.println("<br/>");
+	
+	String OTP = Utils.generateOTP(challenge,st,info.h);
+	out.println("initial seed st = "+st+"<br>"+OTP+"<br>challenge = "+path);
+	
+	//String seed = "SkJ6L8a9Xas6jjx6Icvk3vVHjZXUqsg3c2B9dDucAhRzuVkUWql!zta5pVnoy1xzfzQ5$nSDHeiC$kmIhLvXuc";
+	//String OTP1 = Utils.generateOTP(new int[] {0},seed,new String[] {"MD2"});
+	//out.println("initial seed seed = "+seed+"<br>"+OTP1);
+	
 	
 	
 	%>
@@ -111,35 +112,78 @@ if(info != null) {
 	<input id="otp" type="text" name="otp" size="30" />
 	<input id="login" type="hidden" name="login" value="<%=login%>" />
 	<input id="cc" type="hidden" name="cc" value="<%=cc%>" />
-	<a href="javascript:startCamera()">Read from QR</a><br/>
+	<a href="javascript:start()">Read from QR</a><br/>
 	<input id="validate" type="submit" value="Validate" />
 	
 	</form>
 	<%
 }	
 %>
-<video id="preview"></video>
-    <script type="text/javascript">
-	function startCamera() {
-      let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-      scanner.addListener('scan', function (content) {
-	    //alert(content);
-		document.getElementById('otp').value = content;
-        alert(content);
-      });
-      Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-          scanner.start(cameras[0]);
-        } else {
-          alert('No cameras found.');
-        }
-      }).catch(function (e) {
-        alert(e);
-      });
-	}
-	
-   //startCamera();
 
-    </script>
+<canvas id="canvas" hidden></canvas>    
+
+<video id="preview"></video>
+<script type="text/javascript">
+function start() {
+	var video = document.createElement("video");
+	var canvasElement = document.getElementById("canvas");
+	var canvas = canvasElement.getContext("2d");
+	//var loadingMessage = document.getElementById("loadingMessage");
+	//var outputContainer = document.getElementById("output");
+	var outputMessage = document.getElementById("outputMessage");
+	//var outputData = document.getElementById("outputData");
+
+	function drawLine(begin, end, color) {
+		canvas.beginPath();
+		canvas.moveTo(begin.x, begin.y);
+		canvas.lineTo(end.x, end.y);
+		canvas.lineWidth = 4;
+		canvas.strokeStyle = color;
+		canvas.stroke();
+	}
+
+	// Use facingMode: environment to attemt to get the front camera on phones
+	navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
+		video.srcObject = stream;
+		video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+		video.play();
+		requestAnimationFrame(tick);
+	});
+
+	function tick() {
+		//loadingMessage.innerText = "⌛ Loading video..."
+		if (video.readyState === video.HAVE_ENOUGH_DATA) {
+			//loadingMessage.hidden = true;
+			canvasElement.hidden = false;
+			//outputContainer.hidden = false;
+
+			canvasElement.height = video.videoHeight;
+			canvasElement.width = video.videoWidth;
+			canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+			var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+			var code = jsQR(imageData.data, imageData.width, imageData.height, {
+inversionAttempts: "dontInvert",
+			});
+			if (code) {
+				drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+				drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+				drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+				drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+				//outputMessage.hidden = true;
+				//outputData.parentElement.hidden = false;
+				//outputData.innerText = code.data;
+				//document.getElementById('idstr').value = code.data;
+				document.getElementById('otp').value = code.data;
+				alert(code.data);
+				
+			} else {
+				//outputMessage.hidden = false;
+				//outputData.parentElement.hidden = true;
+			}
+		}
+		requestAnimationFrame(tick);
+	}
+}
+</script>
 </body>
 </html>
