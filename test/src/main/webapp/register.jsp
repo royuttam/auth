@@ -40,7 +40,7 @@ public void save(String login, ClientInfo info, String root) throws Exception {
 	for(String hs:info.h) s = s + hs + " "; 	
 	String si="";
 	for(int mi:info.m) si = si + mi + " "; 	
-	String str = login+del+info.si+del+info.ss+del+info.cs+del+s.trim()+del+si.trim();		
+	String str = login+del+info.si+del+info.ss+del+info.cs+del+s.trim()+del+si.trim()+del+info.passwd;		
 	prop1.setProperty(login, str);
 	prop1.store(output, null);		
 	output.close();
@@ -92,7 +92,7 @@ if(!hf.equals("")) {
 	}
 	//sb.append('c');
 	//out.println(sb.toString());
-	char[] chars = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9','!','$'};
+	char[] chars = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9','!','#'};
 	int c = 0, sum=0, cnt = 0;
 	String s = ""; 
 	for(int i=0;i<digest.length*8;i++) {
@@ -123,12 +123,13 @@ if(!hf.equals("")) {
 	
 	out.println("<br/>Initial seed: "+si+" "+si.length()+"<br/>");
 	out.println("Hash functions: "+hf+"<br/>");
-	ClientInfo info  = new ClientInfo(si.toString(), h,m);
+	ClientInfo info  = new ClientInfo(si.toString(), h,m, Utils.updateSeed(passwd,h[0]));
 	si=si+"$"+hf;
+	out.println(si);
 	//out.println("<br/> QR text length: "+si.length()+"<br/>");
 	//}
 	String root = request.getServletContext().getRealPath("/")+"/";
-	save(login, info, root);
+	save(login, info, root );
 	%>
 	<!--
 	<img src="QR.jsp?idstr=<%= si %>&mode=1&caption=Initial Seed and hash(<%=si.length()%>)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
