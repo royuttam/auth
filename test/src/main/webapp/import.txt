@@ -1,0 +1,5 @@
+<%@ page import="net.glxn.qrgen.QRCode, net.glxn.qrgen.image.ImageType"%>
+<%@ page import="java.security.MessageDigest, java.nio.charset.StandardCharsets "%>
+<%@ page import="com.aspose.barcode.generation.*, com.aspose.barcode.*"%>
+
+

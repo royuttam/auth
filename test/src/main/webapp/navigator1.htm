@@ -1,0 +1,15 @@
+<html>
+   <head>
+      <title>onLoad Event example</title>
+<script language="JavaScript">
+function inform() {
+  //alert('You are using ' + navigator.appName + '--' + navigator.appVersion);
+  //alert(window.orientation);
+  if (typeof window.orientation !== 'undefined') { alert('Mobile'); }
+  else alert('Computer');
+}
+</script>      
+   </head>
+   <body onLoad="inform()">
+   </body>
+</html>

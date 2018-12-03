@@ -37,14 +37,32 @@ public ClientInfo load(String login, String root) throws Exception {
 	Properties prop = new Properties();
 	prop.load(new FileInputStream(root+"system.conf"));
 	String s = prop.getProperty(login);	
-	String[] str = s.split("\\.");
-	String[] mstr = str[5].split(" ");
-	int[] m = new int[mstr.length];
-	for(int i=0;i<mstr.length;i++) m[i]=Integer.parseInt(mstr[i]);
-	
-	ClientInfo info = new ClientInfo(str[1],str[4].split(" "), m);		
-	info.ss = str[2]; info.cs = Integer.parseInt(str[3]);	
-	return info;	
+	if(s == null) return null;
+	else {
+		String[] str = s.split("\\.");
+		String[] mstr = str[5].split(" ");
+		int[] m = new int[mstr.length];
+		for(int i=0;i<mstr.length;i++) m[i]=Integer.parseInt(mstr[i]);
+		String passwd = str[6];
+		ClientInfo info = new ClientInfo(str[1],str[4].split(" "), m, passwd);		
+		info.ss = str[2]; info.cs = Integer.parseInt(str[3]);	
+		return info;	
+	}
+}
+public void save(String login, ClientInfo info, String root) throws Exception {
+	Properties prop1 = new Properties();
+	FileInputStream input = new FileInputStream(root+"system.conf");
+	prop1.load(input);
+	input.close();
+	OutputStream output = new FileOutputStream(root+"system.conf");
+	String del = ".", s ="";
+	for(String hs:info.h) s = s + hs + " "; 	
+	String si="";
+	for(int mi:info.m) si = si + mi + " "; 	
+	String str = login+del+info.si+del+info.ss+del+info.cs+del+s.trim()+del+si.trim()+del+info.passwd;		
+	prop1.setProperty(login, str);
+	prop1.store(output, null);		
+	output.close();
 }
 %>
 <% 
@@ -63,7 +81,6 @@ if((System.currentTimeMillis() - inf.time) > 100000) {
 	out.print("Timer expired. Retry again");
 }
 else 
-
 if(info != null) {
 	String si = info.si, ss=info.ss;
 	int cs = info.cs;					
@@ -91,7 +108,8 @@ if(info != null) {
 	if(OTP.equals(otp)) {
 		info.ss = st;
 		info.cs=cc;
-		out.println("Authentication sucessfull");
+		save(login, info, root );
+		out.println("Authentication successful");
 	}
 	else 
 	out.println("Authentication Failed");
