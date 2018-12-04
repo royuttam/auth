@@ -77,7 +77,7 @@ out.println(inf.time+"<br/>");
 for(int i:inf.challenge)
 out.println(i+" ");
 
-if((System.currentTimeMillis() - inf.time) > 100000) {
+if((System.currentTimeMillis() - inf.time) > 300000) {
 	out.print("Timer expired. Retry again");
 }
 else 
