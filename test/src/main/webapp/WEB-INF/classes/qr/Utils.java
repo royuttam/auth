@@ -71,7 +71,8 @@ public class Utils {
 				md = MessageDigest.getInstance( h[challenge[i]] );
 				md.update( sc.getBytes( StandardCharsets.UTF_8 ) );
 				byte[] digest = md.digest();
-				sc = getHexString(digest);
+				//sc = getHexString(digest);
+				sc = getAlphaNumericString(digest);
 			}
 			return sc;
 		}

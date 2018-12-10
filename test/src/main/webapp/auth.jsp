@@ -4,6 +4,9 @@
 <%@ page import="java.io.ByteArrayOutputStream, java.io.OutputStream"%>
 <%@ page import="qr.*, java.util.Date"%>
 
+<%@ page import="java.security.*,java.nio.charset.StandardCharsets"%>
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -41,6 +44,25 @@ public void save(String login, int[] challenge, String root) throws Exception {
 	prop1.store(output, null);		
 	output.close();
 }
+/*
+public String encode(String sc, String h) {
+		try {
+			MessageDigest md=MessageDigest.getInstance( h);
+			md.update( sc.getBytes( StandardCharsets.UTF_8 ) );
+			byte[] digest = md.digest();
+			return getHexString(digest);
+			//return getAlphaNumericString(digest);
+		}
+		catch(NoSuchAlgorithmException e) { return "";}
+	}
+public String getHexString (byte[] buf) {
+		StringBuffer sb = new StringBuffer();
+		for (byte b:buf){
+			sb.append(String.format("%02x", b));
+		}
+		return sb.toString();
+	}
+	*/
 %>
 <% 
 String login =  request.getParameter("login");
@@ -72,10 +94,12 @@ else {
 	
 	
 	String st = ss; 
+	//out.println(encode(st,info.h[0])+"<br/>");
 	//out.println("<br/>"+st+"<br/>");
 	if(cc >= cs) {
 		for(int i=cs+1;i<=cc;i++) 
 		st=Utils.updateSeed(st,info.h[0]);
+		
 	}
 	else {
 		st = si; 
@@ -84,12 +108,13 @@ else {
 	}
 	//out.println("<br/>st = "+st+"<br/>");
 	
-	//for(String hash: info.h)
-	//out.print(hash+" ");
-	//out.println("<br/>");
 	
 	String OTP = Utils.generateOTP(challenge,st,info.h);
-	out.println("initial seed st = "+st+"<br>"+OTP+"<br>challenge = "+path);
+	out.println("Initial seed = "+si+"<br/>Counter="+cc+"<br/>Current seed st = "+st+"<br>challenge="+path+"<br>OTP = "+OTP+"<br/>");
+	for(String hash: info.h)
+	out.print(hash+" ");
+	out.println("<br/>");
+	
 	
 	//String seed = "SkJ6L8a9Xas6jjx6Icvk3vVHjZXUqsg3c2B9dDucAhRzuVkUWql!zta5pVnoy1xzfzQ5$nSDHeiC$kmIhLvXuc";
 	//String OTP1 = Utils.generateOTP(new int[] {0},seed,new String[] {"MD2"});
