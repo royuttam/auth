@@ -126,9 +126,9 @@ else {
 	<img src="QR.jsp?idstr=<%= OTP %>&mode=1&caption=OTP"><br/>
 	-->
 	<img src="QR1.jsp?idstr=<%= path %>&mode=0&caption=Challenge">
-	<img src="QR1.jsp?idstr=<%= OTP %>&mode=1&caption=OTP"><br />
-	
 	<!--
+	<img src="QR1.jsp?idstr=<%= OTP %>&mode=1&caption=OTP"><br />
+		
 	<img src="servlet/GenerateQRCode?qrText=<%= path %>">
 	<img src="servlet/GenerateQRCode?qrText=<%= OTP %>">
 	-->
